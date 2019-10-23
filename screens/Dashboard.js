@@ -23,7 +23,7 @@ class Dashboard extends React.Component {
     onCollectionUpdate = (querySnapshot) => {
         const hires = [];
         querySnapshot.forEach((doc) => {
-          const { driverId, hireStatus,hireType, pickupDatetime, pickupLocation, customerId } = doc.data()
+          const { driverId, hireStatus,hireType, pickupDatetime, pickupLocation, customerId, customerName } = doc.data()
           hires.push({
             key: doc.id,
             driverId,
@@ -31,6 +31,7 @@ class Dashboard extends React.Component {
             hireType,
             pickupLocation,
             customerId,
+            customerName,
             pickupDatetime: moment(pickupDatetime).format('MMM Do YYYY, h:mm:ss a'),
             pickupDate : pickupDatetime
           });
@@ -114,7 +115,16 @@ class Dashboard extends React.Component {
                                 <Text h2>Ongoing Hire</Text>
                             </View>
                             <View>
-                                <Text h5>Hire Type: {ongoingHire[0].hireType}</Text>
+                                <Text h5>{ongoingHire[0].hireType.toUpperCase()}</Text>
+                            </View>
+                            <View>
+                                <Text h5>Customer: {ongoingHire[0].customerName}</Text>
+                            </View>
+                            <View>
+                                <Text h5>Pickup Location: {ongoingHire[0].pickupLocation}</Text>
+                            </View>
+                            <View>
+                                <Text h5>Date and TIme: {ongoingHire[0].pickupDatetime}</Text>
                             </View>
                         </View> 
                         <View style={styles.detailButton}>
@@ -124,7 +134,13 @@ class Dashboard extends React.Component {
                             color={'#FFFFFF'}
                             title='Manage Hire'
                             buttonStyle={{backgroundColor: 'green'}}
-                            onPress={()=> {}}
+                            onPress={() => {
+                                this.props.navigation.navigate('ManageOngoingHire',{
+                                    hireId: ongoingHire[0].key,
+                                    customerId: ongoingHire[0].customerId
+                                }
+                                );
+                            }}
                             />
                         </View>
                     </Card>

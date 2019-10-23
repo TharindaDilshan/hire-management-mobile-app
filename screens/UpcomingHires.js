@@ -45,7 +45,7 @@ class UpcomingHires extends Component {
    });
   }
   render() {
-    if(!this.state.boards.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'ongoing' && new Date(item.pickupDate).getDate() > new Date().getDate() ).length){
+    if(!this.state.boards.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'ongoing' && moment(item.pickupDate).format('MMMM Do YYYY') > moment().format('MMMM Do YYYY') ).length){
         return(
             <View style={styles.activity}>
                 <Text h3>No Upcoming Hires</Text>
@@ -55,7 +55,7 @@ class UpcomingHires extends Component {
     return (
       <ScrollView style={styles.container}>
           {
-            this.state.boards.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'ongoing' && new Date(item.pickupDate).getDate() > new Date().getDate()  ).map((item, i) => (
+            this.state.boards.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'ongoing' && moment(item.pickupDate).format('MMMM Do YYYY') > moment().format('MMMM Do YYYY')  ).map((item, i) => (
               <ListItem
                 style={styles.listItem}
                 key={i}
