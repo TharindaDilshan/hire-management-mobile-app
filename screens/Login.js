@@ -60,15 +60,16 @@ class Login extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        // flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        paddingVertical: 40
     },
     inputBox: {
         width: '85%',
         margin: 10,
-        padding: 15,
+        padding: 10,
         fontSize: 16,
         borderColor: '#d3d3d3',
         borderBottomWidth: 1,
@@ -95,8 +96,8 @@ const styles = StyleSheet.create({
     },
     image: {
         width: 150,
-        height: 150,
-        marginTop: 13,
+        height: 100,
+        // marginTop: 10,
         alignSelf: "center"
     },
 })

@@ -10,16 +10,16 @@ class Dashboard extends React.Component {
     constructor() {
         super();
         this.ref = Firebase.firestore().collection('hires');
-        // this.unsubscribe = null;
+        this.unsubscribe = null;
         this.state = {
           isLoading: true,
           hires: []
         };
     }
     
-    // componentDidMount() {
-    //     this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
-    // }
+    componentDidMount() {
+        this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
+    }
     onCollectionUpdate = (querySnapshot) => {
         const hires = [];
         querySnapshot.forEach((doc) => {
@@ -58,6 +58,7 @@ class Dashboard extends React.Component {
               </View>
             )
         }
+        const ongoingHire = this.state.hires.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'ongoing' && moment(item.pickupDate).format('MMMM Do YYYY') === moment().format('MMMM Do YYYY') )
         return (
             <ScrollView>
                 <TouchableOpacity style={styles.signout} onPress={
@@ -84,27 +85,50 @@ class Dashboard extends React.Component {
                         </TouchableOpacity>
                     </View> 
                 </Card>
-                <Card style={styles.cardContainer}>
-                    <View style={styles.subContainer}>
-                        <View>
-                            <Text h3>Ongoing Hire</Text>
+                
+                {!ongoingHire.length ?
+                    <Card style={styles.cardContainer}>
+                        <View style={styles.subContainer}>
+                            <View>
+                                <Text h2>Ongoing Hire</Text>
+                            </View>
+                            <View>
+                                <Text h4>There is no hire assigned for today! Party hard man...</Text>
+                            </View>
+                        </View> 
+                        <View style={styles.detailButton}>
+                            <Button
+                            large
+                            backgroundColor={'#999999'}
+                            color={'#FFFFFF'}
+                            title='Party Hard'
+                            buttonStyle={{backgroundColor: 'green'}}
+                            onPress={()=> {}}
+                            />
                         </View>
-                        <View>
-                            <Text h5>Test Hire</Text>
+                    </Card>
+                : 
+                    <Card style={styles.cardContainer}>
+                        <View style={styles.subContainer}>
+                            <View>
+                                <Text h2>Ongoing Hire</Text>
+                            </View>
+                            <View>
+                                <Text h5>Hire Type: {ongoingHire[0].hireType}</Text>
+                            </View>
+                        </View> 
+                        <View style={styles.detailButton}>
+                            <Button
+                            large
+                            backgroundColor={'#999999'}
+                            color={'#FFFFFF'}
+                            title='Manage Hire'
+                            buttonStyle={{backgroundColor: 'green'}}
+                            onPress={()=> {}}
+                            />
                         </View>
-                    </View> 
-                    <View style={styles.detailButton}>
-                        <Button
-                        large
-                        backgroundColor={'#999999'}
-                        color={'#FFFFFF'}
-                        // leftIcon={{name: 'delete'}}
-                        title='Manage Hire'
-                        buttonStyle={{backgroundColor: 'yellow'}}
-                        onPress={()=> {}}
-                        />
-                    </View>
-                </Card>
+                    </Card>
+                }    
             </ScrollView>
         )
     }
@@ -143,7 +167,7 @@ const styles = StyleSheet.create({
         paddingVertical: 3,
         alignItems: 'center',
         backgroundColor: 'transparent',
-        borderColor: '#007bff',
+        borderColor: 'black',
         borderWidth: 2,
         borderRadius: 5,
         width: '100%',
