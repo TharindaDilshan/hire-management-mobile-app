@@ -44,6 +44,7 @@ class Dashboard extends React.Component {
 
     static navigationOptions = {
         title: 'Dashboard', 
+        headerLeft: null,
     };
 
     handleSignout = () => {
@@ -58,7 +59,7 @@ class Dashboard extends React.Component {
                 <ActivityIndicator size="large" color="#0000ff" />
               </View>
             )
-        }
+        } 
         const ongoingHire = this.state.hires.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'ongoing' && moment(item.pickupDate).format('MMMM Do YYYY') === moment().format('MMMM Do YYYY') )
         return (
             <ScrollView>

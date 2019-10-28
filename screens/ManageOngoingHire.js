@@ -48,24 +48,24 @@ class ManageOngoingHire extends Component {
 
   }
 
-//   rejectHire(key) {
-//     this.setState({
-//       isLoading: true,
-//     });
+  rejectHire(key) {
+    this.setState({
+      isLoading: true,
+    });
 
-//     const updateRef = Firebase.firestore().collection('hires').doc(key);
-//     updateRef.update({
-//       hireStatus: 'request',
-//     }).then((docRef) => {
-//       this.props.navigation.navigate('UpcomingHires');
-//     })
-//     .catch((error) => {
-//       console.error("Error updating document: ", error);
-//       this.setState({
-//         isLoading: false,
-//       });
-//     });
-//   }
+    const updateRef = Firebase.firestore().collection('hires').doc(key);
+    updateRef.update({
+      hireStatus: 'request',
+    }).then((docRef) => {
+      this.props.navigation.navigate('UpcomingHires');
+    })
+    .catch((error) => {
+      console.error("Error updating document: ", error);
+      this.setState({
+        isLoading: false,
+      });
+    });
+  }
 
   render() {
     if(this.state.isLoading){

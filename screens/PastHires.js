@@ -43,7 +43,6 @@ class PastHires extends Component {
    });
   }
   render() { 
-    // console.log('boom',this.props.user.id)
     return (
       <ScrollView style={styles.container}>
           {
