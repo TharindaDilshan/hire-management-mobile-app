@@ -1,9 +1,10 @@
 import React from 'react'
 import { View, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
-import { Text, Card, Button } from 'react-native-elements';
+import { Text, Card, Button, Badge } from 'react-native-elements';
 import Firebase from '../config/Firebase';
 import { connect } from 'react-redux'
 import moment from 'moment'
+import { Row } from 'native-base';
 
 class Dashboard extends React.Component {
 
@@ -61,6 +62,8 @@ class Dashboard extends React.Component {
             )
         } 
         const ongoingHire = this.state.hires.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'ongoing' && moment(item.pickupDate).format('MMMM Do YYYY') === moment().format('MMMM Do YYYY') )
+        const assignedHiresCount = this.state.hires.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'driverPending').length
+        const upcomingHiresCount = this.state.hires.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'ongoing' && moment(item.pickupDate).format('MMMM Do YYYY') > moment().format('MMMM Do YYYY') ).length
         return (
             <ScrollView>
                 <TouchableOpacity style={styles.signout} onPress={
@@ -73,12 +76,14 @@ class Dashboard extends React.Component {
                         <TouchableOpacity style={styles.button} onPress={() => {
                             this.props.navigation.navigate('AssignedHires')
                         }}>
-                            <Text style={styles.buttonText}>ASSIGNED HIRES</Text>
+                            <Text style={styles.buttonText}>NEW HIRE ASSIGNMENTS  </Text>
+                            <Badge style={styles.badge} value={assignedHiresCount} status="primary" />
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.button} onPress={() => {
                             this.props.navigation.navigate('UpcomingHires');
                         }}>
-                            <Text style={styles.buttonText}>UPCOMING HIRES</Text>
+                            <Text style={styles.buttonText}>UPCOMING HIRES  </Text>
+                            <Badge style={styles.badge} value={upcomingHiresCount} status="primary" />
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.button} onPress={() => {
                             this.props.navigation.navigate('PastHires');
@@ -92,21 +97,21 @@ class Dashboard extends React.Component {
                     <Card style={styles.cardContainer}>
                         <View style={styles.subContainer}>
                             <View>
-                                <Text h2>Ongoing Hire</Text>
+                                <Text h3>Ongoing Hire for {moment().format('MMM Do YYYY')}</Text>
                             </View>
                             <View>
-                                <Text h4>There is no hire assigned for today! Party hard man...</Text>
+                                <Text h5>There is no hire assigned for today!</Text>
                             </View>
                         </View> 
                         <View style={styles.detailButton}>
-                            <Button
+                            {/* <Button
                             large
                             backgroundColor={'#999999'}
                             color={'#FFFFFF'}
                             title='Party Hard'
                             buttonStyle={{backgroundColor: 'green'}}
                             onPress={()=> {}}
-                            />
+                            /> */}
                         </View>
                     </Card>
                 : 
@@ -189,12 +194,15 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         width: '100%',
         height: 50,
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
     },
     buttonText: {
         fontSize: 25,
         fontWeight: 'bold',
         color: 'black',
-        paddingVertical: 8
+        paddingVertical: 8,
     },
     signoutButtonText: {
         fontSize: 20,
