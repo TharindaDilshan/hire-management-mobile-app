@@ -3,6 +3,7 @@ import { StyleSheet, ScrollView, ActivityIndicator, View } from 'react-native';
 import { List, ListItem, Text, Card, Button } from 'react-native-elements';
 import Firebase from '../config/Firebase';
 import moment from 'moment'
+import Timeline from 'react-native-timeline-flatlist'
 
 class PastHireDetails extends Component {
   static navigationOptions = {
@@ -21,11 +22,24 @@ class PastHireDetails extends Component {
   componentDidMount() {
     const { navigation } = this.props;
     const ref = Firebase.firestore().collection('hires').doc(navigation.getParam('hireId'));
+    const refCustomer = Firebase.firestore().collection('customers').doc(navigation.getParam('customerId'));
     ref.get().then((doc) => {
       if (doc.exists) {
         this.setState({
           hire: doc.data(),
           key: doc.id,
+          // timeline: Object.values(doc.data().timeline).map(({ at, title }) => ({ time: at, title: title, description: " " }))
+          // isLoading: false
+        });
+      } else {
+        console.log("No such document!");
+      }
+    });
+    refCustomer.get().then((docCustomer) => {
+      if (docCustomer.exists) {
+        this.setState({
+          customer: docCustomer.data(),
+          customerKey: docCustomer.id,
           isLoading: false
         });
       } else {
@@ -44,103 +58,214 @@ class PastHireDetails extends Component {
     return (
       <ScrollView>
         {this.state.hire.hireType === 'import' ? 
-          <Card style={styles.container}>
-            <View style={styles.subContainer}>
-              <View>
-                <Text h3>{this.state.hire.hireType.toUpperCase()}</Text>
-              </View>
-              <View>
-                <Text h5>Date: {moment(this.state.hire.completedDatetime.toDate()).format('MMM Do YYYY, h:mm:ss a')}</Text>
-              </View>
-              <View>
-                <Text h5>Customer: {this.state.hire.customerName}</Text>
-              </View>
-              <View>
-                <Text h5>Vehicle: {this.state.hire.vehicleNo}</Text>
-              </View>
+        <Card style={styles.container}>
+          <View style={styles.subContainer}>
+            <View>
+              <Text h3>{this.state.hire.hireType.toUpperCase()}{"\n"}</Text>
             </View>
-            <View style={styles.subContainer}>
-              <View>
-                <Text h3>Container Details</Text>
-              </View>
-              <View>
-                <Text h5>Container Type: {this.state.hire.containerType}</Text>
-              </View>
-              <View>
-                <Text h5>Pickup Date: {moment(this.state.hire.pickupDatetime).format('MMM Do YYYY, h:mm:ss a')}</Text>
-              </View>
-              <View>
-                <Text h5>Container Location: {this.state.hire.pickupLocation}</Text>
-              </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>Date: {moment(this.state.hire.pickupDatetime).format('MMM Do YYYY, h:mm:ss a')}</Text>
             </View>
-            <View style={styles.subContainer}>
-              <View>
-                <Text h3>Cargo Details</Text>
-              </View>
-              <View>
-                <Text h5>Cargo Type: {this.state.hire.cargoType}</Text>
-              </View>
-              <View>
-                <Text h5>Cargo Weight: {this.state.hire.weight}</Text>
-              </View>
-              <View>
-                <Text h5>Vessel Arrived Date: {moment(this.state.hire.vesselArrivalDatetime).format('MMM Do YYYY, h:mm:ss a')}</Text>
-              </View>
-              <View>
-                <Text h5>Unloaded Port: {this.state.hire.unloadingPort}</Text>
-              </View>
-              <View>
-                <Text h5>Destination: {this.state.hire.destination}</Text>
-              </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>Customer: {this.state.hire.customerName}</Text>
             </View>
-          </Card>
+            <View>
+              <Text h5 style={{fontSize:20}}>Vehicle: {this.state.hire.vehicleNo}</Text>
+            </View>
+          </View>
+          <View style={styles.subContainer}>
+            <View alignItems="center">
+              <Text h3>Container Details{"\n"}</Text>
+            </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>Container Type: {this.state.hire.containerType}</Text>
+            </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>Pickup Date: {moment(this.state.hire.pickupDatetime).format('MMM Do YYYY, h:mm a')}</Text>
+            </View>
+            <View>
+              <Text h4>{"\n"}Container Location</Text>
+            </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>AddressLine 1: {this.state.hire.containerPickupAddressLine1} </Text>
+            </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>AddressLine 2: {this.state.hire.containerPickupAddressLine2} </Text>
+            </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>City: {this.state.hire.containerPickupCity} </Text>
+            </View>
+          </View>
+          <View style={styles.subContainer}>
+            <View alignItems="center">
+              <Text h3>Cargo Details{"\n"}</Text>
+            </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>Cargo Type(s): {this.state.hire.cargoType}</Text>
+            </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>Cargo Weight: {this.state.hire.netWeight}</Text>
+            </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>Vessel Arrival Date: {moment(this.state.hire.vesselArrivalDatetime).format('MMM Do YYYY, h:mm a')}</Text>
+            </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>Unloading Port: {this.state.hire.unloadingPort}</Text>
+            </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>Unloading Terminal: {this.state.hire.unloadingTerminal}</Text>
+            </View>
+          </View>
+          <View style={styles.subContainer}>
+            <View alignItems="center">
+              <Text h3>Destination Address{"\n"}</Text>
+            </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>AddressLine 1: {this.state.hire.destinationAddressLine1}</Text>
+            </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>AddressLine 2: {this.state.hire.destinationAddressLine2}</Text>
+            </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>City: {this.state.hire.destinationCity}</Text>
+            </View>
+          </View>
+          <View style={styles.subContainer}>
+            <View alignItems="center">
+              <Text h3>Customer Details{"\n"}</Text>
+            </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>Customer Name: {this.state.customer.firstName + " " + this.state.customer.lastName}</Text>
+            </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>Mobile: {this.state.customer.mobile}</Text>
+            </View>
+          </View>
+          <View style={styles.subContainer}>
+            <View alignItems="center"> 
+              <Text h3>Remarks{"\n"}</Text>
+            </View>
+            <View>
+              <Text h5 style={{fontSize:20}}>{this.state.hire.remarks}</Text>
+            </View>
+          </View>
+          <View alignItems="center">
+              <Text h3>Timeline{"\n"}</Text>
+          </View>
+          <Timeline
+            data={Object.values(this.state.hire.timeline).sort((a,b) => a.id > b.id).map(({ at, title }) => ({ time: moment(at.toDate()).format('MMM Do YYYY, h:mm a'), title: title, description: "" }))}
+            options={{
+              removeClippedSubviews: false
+            }}
+          />
+        </Card>
         :
         <Card style={styles.container}>
           <View style={styles.subContainer}>
               <View>
-                <Text h3>{this.state.hire.hireType.toUpperCase()}</Text>
+                <Text h3>{this.state.hire.hireType.toUpperCase()}{"\n"}</Text>
               </View>
               <View>
-                <Text h5>Date: {moment(this.state.hire.completedDatetime.toDate()).format('MMM Do YYYY, h:mm:ss a')}</Text>
+                <Text h5 style={{fontSize:20}}>Date: {moment(this.state.hire.pickupDatetime).format('MMM Do YYYY, h:mm a')}</Text>
               </View>
               <View>
-                <Text h5>Customer: {this.state.hire.customerName}</Text>
+                <Text h5 style={{fontSize:20}}>Customer: {this.state.hire.customerName}</Text>
               </View>
               <View>
-                <Text h5>Vehicle: {this.state.hire.vehicleNo}</Text>
+                <Text h5 style={{fontSize:20}}>Vehicle: {this.state.hire.vehicleNo}</Text>
               </View>
             </View>
             <View style={styles.subContainer}>
-              <View>
-                <Text h3>Container Details</Text>
+              <View alignItems="center">
+                <Text h3>Container Details{"\n"}</Text>
               </View>
               <View>
-                <Text h5>Container Type: {this.state.hire.containerType}</Text>
+                <Text h5 style={{fontSize:20}}>Container Type: {this.state.hire.containerType}</Text>
               </View>
               <View>
-                <Text h5>Pickup Date: {moment(this.state.hire.pickupDatetime).format('MMM Do YYYY, h:mm:ss a')}</Text>
+                <Text h4>{"\n"}Container Location</Text>
               </View>
               <View>
-                <Text h5>Container Location: {this.state.hire.pickupLocation}</Text>
+                <Text h5 style={{fontSize:20}}>AddressLine 1: {this.state.hire.containerPickupAddressLine1}</Text>
+              </View>
+              <View>
+                <Text h5 style={{fontSize:20}}>AddressLine 2: {this.state.hire.containerPickupAddressLine2}</Text>
+              </View>
+              <View>
+                <Text h5 style={{fontSize:20}}>City: {this.state.hire.containerPickupCity}</Text>
               </View>
             </View>
             <View style={styles.subContainer}>
-              <View>
-                <Text h3>Cargo Details</Text>
+              <View alignItems="center">
+                <Text h3>Cargo Details{"\n"}</Text>
               </View>
               <View>
-                <Text h5>Cargo Type: {this.state.hire.cargoType}</Text>
+                <Text h5 style={{fontSize:20}}>Cargo Type(s): {this.state.hire.cargoType}</Text>
               </View>
               <View>
-                <Text h5>Cargo Weight: {this.state.hire.weight}</Text>
+                <Text h5 style={{fontSize:20}}>Cargo Weight: {this.state.hire.netWeight}</Text>
               </View>
               <View>
-                <Text h5>Loaded Date: {moment(this.state.hire.loadingDatetime).format('MMM Do YYYY, h:mm:ss a')}</Text>
+                <Text h5 style={{fontSize:20}}>Cargo Pickup Date: {moment(this.state.hire.pickupDatetime).format('MMM Do YYYY, h:mm a')}</Text>
               </View>
               <View>
-                <Text h5>Loaded Port: {this.state.hire.loadingPort}</Text>
+                <Text h4>{"\n"}Cargo Pickup Location</Text>
+              </View>
+              <View>
+                <Text h5 style={{fontSize:20}}>AddressLine 1: {this.state.hire.cargoLocationAddressLine1}</Text>
+              </View>
+              <View>
+                <Text h5 style={{fontSize:20}}>AddressLine 2: {this.state.hire.cargoLocationAddressLine2}</Text>
+              </View>
+              <View>
+                <Text h5 style={{fontSize:20}}>City: {this.state.hire.cargoLocationCity}</Text>
               </View>
             </View>
+            <View style={styles.subContainer}>
+              <View alignItems="center">
+                <Text h3>Loading Details{"\n"}</Text>
+              </View>
+              <View>
+                <Text h5 style={{fontSize:20}}>Loading Port: {this.state.hire.loadingPort} </Text>
+              </View>
+              <View>
+                <Text h5 style={{fontSize:20}}>Loading Terminal: {this.state.hire.loadingTerminal} </Text>
+              </View>
+              <View>
+                <Text h5 style={{fontSize:20}}>Vessel: {this.state.hire.vessel} </Text>
+              </View>
+              <View>
+                <Text h5 style={{fontSize:20}}>Loading Date: {moment(this.state.hire.loadingDatetime).format('MMM Do YYYY, h:mm a')} </Text>
+              </View>
+            </View>
+            <View style={styles.subContainer}>
+              <View alignItems="center">
+                <Text h3>Customer Details{"\n"}</Text>
+              </View>
+              <View>
+                <Text h5 style={{fontSize:20}}>Customer Name: {this.state.customer.firstName + " " + this.state.customer.lastName}</Text>
+              </View>
+              <View>
+                <Text h5 style={{fontSize:20}}>Mobile: {this.state.customer.mobile}</Text>
+              </View>
+            </View>
+            <View style={styles.subContainer}>
+              <View alignItems="center">
+                <Text h3>Remarks{"\n"}</Text>
+              </View>
+              <View>
+                <Text h5 style={{fontSize:20}}>{this.state.hire.remarks}</Text>
+              </View>
+            </View>
+            <View alignItems="center">
+                <Text h3>Timeline{"\n"}</Text>
+              </View>
+            <Timeline
+              data={Object.values(this.state.hire.timeline).sort((a,b) => a.id > b.id).map(({ at, title }) => ({ time: moment(at.toDate()).format('MMM Do YYYY, h:mm a'), title: title, description: "" }))}
+              options={{
+                removeClippedSubviews: false
+              }}
+            />
         </Card>
         }
       </ScrollView>

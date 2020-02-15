@@ -27,14 +27,10 @@ class PastHires extends Component {
   onCollectionUpdate = (querySnapshot) => {
     const boards = [];
     querySnapshot.forEach((doc) => {
-      const { driverId, hireStatus,hireType, pickupDatetime, pickupLocation } = doc.data()
+      const data = doc.data()
       boards.push({
         key: doc.id,
-        driverId,
-        hireStatus,
-        hireType,
-        pickupLocation,
-        pickupDatetime: moment(pickupDatetime).format('MMM Do YYYY, h:mm:ss a')
+        data
       });
     });
     this.setState({
@@ -43,20 +39,31 @@ class PastHires extends Component {
    });
   }
   render() { 
+    if(!this.state.boards.filter(item => item.data.driverId === this.props.user.id && item.data.hireStatus === 'completed' && moment(item.data.pickupDatetime).isBefore(new Date()) ).length){
+      return(
+          <View style={styles.activity}>
+              <Text h3>No Past Hires</Text>
+          </View>
+      )
+    } 
     return (
       <ScrollView style={styles.container}>
           {
-            this.state.boards.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'completed' ).map((item, i) => (
+            this.state.boards.filter(item => item.data.driverId === this.props.user.id && item.data.hireStatus === 'completed' && moment(item.data.pickupDatetime).isBefore(new Date()) ).map((item, i) => (
               <ListItem
                 style={styles.listItem}
                 key={i}
-                title={item.pickupDatetime + '  ' + item.hireType.toUpperCase() + '  ' + item.pickupLocation.toUpperCase()}
-                leftIcon={{name: 'book', type: 'font-awesome'}}
+                title={item.data.hireType === 'import' ?'Import Hire' + '  Destination: ' + item.data.destinationCity.toUpperCase() : 'Export Hire' + '  Destination: ' + item.data.containerPickupCity.toUpperCase()}
+                subtitle={item.data.hireType === 'import' ? moment(item.data.pickupDatetime).format('MMM Do YYYY, h:mm a') : moment(item.data.pickupDatetime).format('MMM Do YYYY, h:mm a')}
+                leftIcon={{name: 'truck', type: 'font-awesome'}}
                 onPress={() => {
                   this.props.navigation.navigate('PastHireDetails', {
                     hireId: item.key,
+                    customerId: item.data.customerId,
+                    userId: this.props.user.id
                   });
                 }}
+                bottomDivider
               />
             ))
           }
