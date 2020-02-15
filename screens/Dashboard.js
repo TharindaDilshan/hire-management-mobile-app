@@ -63,7 +63,7 @@ class Dashboard extends React.Component {
         } 
         const ongoingHire = this.state.hires.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'ongoing' && moment(item.pickupDate).format('MMMM Do YYYY') === moment().format('MMMM Do YYYY') )
         const assignedHiresCount = this.state.hires.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'driverPending').length
-        const upcomingHiresCount = this.state.hires.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'ongoing' && moment(item.pickupDate).format('MMMM Do YYYY') > moment().format('MMMM Do YYYY') ).length
+        const upcomingHiresCount = this.state.hires.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'ongoing' && moment(item.pickupDate).isAfter(moment(new Date())) && !moment(item.pickupDate).isSame(new Date(),'day')).length
         return (
             <ScrollView>
                 <TouchableOpacity style={styles.signout} onPress={

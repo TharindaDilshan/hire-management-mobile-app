@@ -27,14 +27,10 @@ class AssignedHires extends Component {
   onCollectionUpdate = (querySnapshot) => {
     const boards = [];
     querySnapshot.forEach((doc) => {
-      const { driverId, hireStatus,hireType, pickupDatetime, pickupLocation } = doc.data()
+      const data  = doc.data()
       boards.push({
         key: doc.id,
-        driverId,
-        hireStatus,
-        hireType,
-        pickupLocation,
-        pickupDatetime: moment(pickupDatetime).format('MMM Do YYYY, h:mm:ss a')
+        data
       });
     });
     this.setState({
@@ -43,7 +39,7 @@ class AssignedHires extends Component {
    });
   }
   render() {
-    if(!this.state.boards.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'driverPending' ).length){
+    if(!this.state.boards.filter(item => item.data.driverId === this.props.user.id && item.data.hireStatus === 'driverPending' ).length){
         return(
             <View style={styles.activity}>
                 <Text h3>No Assigned Hires</Text>
@@ -53,17 +49,19 @@ class AssignedHires extends Component {
     return (
       <ScrollView style={styles.container}>
           {
-            this.state.boards.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'driverPending' ).map((item, i) => (
+            this.state.boards.filter(item => item.data.driverId === this.props.user.id && item.data.hireStatus === 'driverPending' ).map((item, i) => (
               <ListItem
                 style={styles.listItem}
                 key={i}
-                title={item.pickupDatetime + '  ' + item.hireType.toUpperCase() + '  ' + item.pickupLocation.toUpperCase()}
-                leftIcon={{name: 'book', type: 'font-awesome'}}
+                title={item.data.hireType === 'import' ?'Import Hire' + '  Destination: ' + item.data.destinationCity.toUpperCase() : 'Export Hire' + '  Destination: ' + item.data.containerPickupCity.toUpperCase()}
+                subtitle={item.data.hireType === 'import' ? moment(item.data.pickupDatetime).format('MMM Do YYYY, h:mm a') : moment(item.data.pickupDatetime).format('MMM Do YYYY, h:mm a')}
+                leftIcon={{name: 'truck', type: 'font-awesome'}}
                 onPress={() => {
                   this.props.navigation.navigate('AssignedHireDetails', {
-                    hireId: item.key,
+                    hireId: item.key,userId: this.props.user.id
                   });
                 }}
+                bottomDivider
               />
             ))
           }

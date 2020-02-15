@@ -27,16 +27,10 @@ class UpcomingHires extends Component {
   onCollectionUpdate = (querySnapshot) => {
     const boards = [];
     querySnapshot.forEach((doc) => {
-      const { driverId, hireStatus,hireType, pickupDatetime, pickupLocation, customerId } = doc.data()
+      const data = doc.data()
       boards.push({
         key: doc.id,
-        driverId,
-        hireStatus,
-        hireType,
-        pickupLocation,
-        customerId,
-        pickupDatetime: moment(pickupDatetime).format('MMM Do YYYY, h:mm:ss a'),
-        pickupDate : pickupDatetime
+        data
       });
     });
     this.setState({
@@ -45,7 +39,7 @@ class UpcomingHires extends Component {
    });
   }
   render() {
-    if(!this.state.boards.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'ongoing' && moment(item.pickupDate).format('MMMM Do YYYY') > moment().format('MMMM Do YYYY') ).length){
+    if(!this.state.boards.filter(item => item.data.driverId === this.props.user.id && item.data.hireStatus === 'ongoing' && moment(item.data.pickupDatetime).isAfter(new Date()) && !moment(item.data.pickupDatetime).isSame(new Date(),'day')).length){
         return(
             <View style={styles.activity}>
                 <Text h3>No Upcoming Hires</Text>
@@ -55,18 +49,21 @@ class UpcomingHires extends Component {
     return (
       <ScrollView style={styles.container}>
           {
-            this.state.boards.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'ongoing' && moment(item.pickupDate).format('MMMM Do YYYY') > moment().format('MMMM Do YYYY')  ).map((item, i) => (
+            this.state.boards.filter(item => item.data.driverId === this.props.user.id && item.data.hireStatus === 'ongoing' && moment(item.data.pickupDatetime).isAfter(new Date()) && !moment(item.data.pickupDatetime).isSame(new Date(),'day')).map((item, i) => (
               <ListItem
                 style={styles.listItem}
                 key={i}
-                title={item.pickupDatetime + '  ' + item.hireType.toUpperCase() + '  ' + item.pickupLocation.toUpperCase()}
-                leftIcon={{name: 'book', type: 'font-awesome'}}
+                title={item.data.hireType === 'import' ?'Import Hire' + '  Destination: ' + item.data.destinationCity.toUpperCase() : 'Export Hire' + '  Destination: ' + item.data.containerPickupCity.toUpperCase()}
+                subtitle={item.data.hireType === 'import' ? moment(item.data.pickupDatetime).format('MMM Do YYYY, h:mm a') : moment(item.data.pickupDatetime).format('MMM Do YYYY, h:mm a')}
+                leftIcon={{name: 'truck', type: 'font-awesome'}}
                 onPress={() => {
                   this.props.navigation.navigate('UpcomingHireDetails', {
                     hireId: item.key,
-                    customerId: item.customerId
+                    customerId: item.data.customerId,
+                    userId: this.props.user.id
                   });
                 }}
+                bottomDivider
               />
             ))
           }
