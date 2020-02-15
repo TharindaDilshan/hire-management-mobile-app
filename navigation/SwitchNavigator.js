@@ -11,6 +11,7 @@ import AssignedHireDetails from '../screens/AssignedHireDetails'
 import UpcomingHires from '../screens/UpcomingHires'
 import UpcomingHireDetails from '../screens/UpcomingHireDetails'
 import ManageOngoingHire from '../screens/ManageOngoingHire'
+import HireTracker from '../screens/HireTracker'
 
 const SwitchNavigator = createStackNavigator(
     {   
@@ -43,6 +44,9 @@ const SwitchNavigator = createStackNavigator(
         },
         ManageOngoingHire: {
             screen:ManageOngoingHire
+        },
+        HireTracker: {
+            screen: HireTracker
         }
     },
     {

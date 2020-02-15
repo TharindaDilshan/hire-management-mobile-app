@@ -20,21 +20,15 @@ class Dashboard extends React.Component {
     
     componentDidMount() {
         this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
+        console.log(this.props.user)
     }
     onCollectionUpdate = (querySnapshot) => {
         const hires = [];
         querySnapshot.forEach((doc) => {
-          const { driverId, hireStatus,hireType, pickupDatetime, pickupLocation, customerId, customerName } = doc.data()
+          const data = doc.data()
           hires.push({
             key: doc.id,
-            driverId,
-            hireStatus,
-            hireType,
-            pickupLocation,
-            customerId,
-            customerName,
-            pickupDatetime: moment(pickupDatetime).format('MMM Do YYYY, h:mm:ss a'),
-            pickupDate : pickupDatetime
+            data
           });
         });
         this.setState({
@@ -61,9 +55,9 @@ class Dashboard extends React.Component {
               </View>
             )
         } 
-        const ongoingHire = this.state.hires.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'ongoing' && moment(item.pickupDate).format('MMMM Do YYYY') === moment().format('MMMM Do YYYY') )
-        const assignedHiresCount = this.state.hires.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'driverPending').length
-        const upcomingHiresCount = this.state.hires.filter(item => item.driverId === this.props.user.id && item.hireStatus === 'ongoing' && moment(item.pickupDate).isAfter(moment(new Date())) && !moment(item.pickupDate).isSame(new Date(),'day')).length
+        const ongoingHire = this.state.hires.filter(item => item.data.driverId === this.props.user.id && item.data.hireStatus === 'ongoing' && moment(item.data.pickupDatetime).isSame(new Date(),'day'))
+        const assignedHiresCount = this.state.hires.filter(item => item.data.driverId === this.props.user.id && item.data.hireStatus === 'driverPending').length
+        const upcomingHiresCount = this.state.hires.filter(item => item.data.driverId === this.props.user.id && item.data.hireStatus === 'ongoing' && moment(item.data.pickupDatetime).isAfter(moment(new Date())) && !moment(item.data.pickupDatetime).isSame(new Date(),'day')).length
         return (
             <ScrollView>
                 <TouchableOpacity style={styles.signout} onPress={
@@ -121,16 +115,16 @@ class Dashboard extends React.Component {
                                 <Text h2>Ongoing Hire</Text>
                             </View>
                             <View>
-                                <Text h5>{ongoingHire[0].hireType.toUpperCase()}</Text>
+                                <Text h5>{ongoingHire[0].data.hireType.toUpperCase()}</Text>
                             </View>
                             <View>
-                                <Text h5>Customer: {ongoingHire[0].customerName}</Text>
+                                <Text h5>Customer: {ongoingHire[0].data.customerName}</Text>
                             </View>
                             <View>
-                                <Text h5>Pickup Location: {ongoingHire[0].pickupLocation}</Text>
+                                <Text h5>Pickup Location: {ongoingHire[0].data.pickupLocation}</Text>
                             </View>
                             <View>
-                                <Text h5>Date and TIme: {ongoingHire[0].pickupDatetime}</Text>
+                                <Text h5>Date and TIme: {ongoingHire[0].data.pickupDatetime}</Text>
                             </View>
                         </View> 
                         <View style={styles.detailButton}>
@@ -143,7 +137,8 @@ class Dashboard extends React.Component {
                             onPress={() => {
                                 this.props.navigation.navigate('ManageOngoingHire',{
                                     hireId: ongoingHire[0].key,
-                                    customerId: ongoingHire[0].customerId
+                                    customerId: ongoingHire[0].data.customerId,
+                                    userId: this.props.user.id
                                 }
                                 );
                             }}

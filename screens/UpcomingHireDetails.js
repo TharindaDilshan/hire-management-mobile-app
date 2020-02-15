@@ -172,7 +172,7 @@ class UpcomingHireDetails extends Component {
               </View>
             </View>
             <View style={styles.subContainer}>
-              <View>
+              <View alignItems="center"> 
                 <Text h3>Remarks{"\n"}</Text>
               </View>
               <View>

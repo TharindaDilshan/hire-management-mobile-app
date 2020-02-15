@@ -22,7 +22,7 @@ export const getUser = uid => {
         try{
             const user = await db.collection('drivers').doc(uid).get()
 
-            dispatch({type: LOGIN, payload: user.data()})
+            dispatch({type: LOGIN, payload: {data: user.data(), id:user.id}})
         } catch (e){
             alert(e)
         }
