@@ -51,12 +51,11 @@ class Dashboard extends React.Component {
     static navigationOptions = {
         title: 'Dashboard', 
         headerLeft: null,
-        // headerRight: (
-        // <Button
-        //     title="Logout"
-        //     onPress={this.handleSignout}
-        // />
-        // ),
+        headerTitleStyle: {
+            fontSize: 20,
+            textAlign: "center",
+            flex: 1
+        }
     };
 
     handleSignout = () => {
@@ -77,57 +76,29 @@ class Dashboard extends React.Component {
         const upcomingHiresCount = this.state.hires.filter(item => item.data.driverId === this.props.user.id && item.data.hireStatus === 'ongoing' && moment(item.data.pickupDatetime).isAfter(moment(new Date())) && !moment(item.data.pickupDatetime).isSame(new Date(),'day')).length
         return (
             <ScrollView>
-                <TouchableOpacity style={styles.signout} onPress={
-                    this.handleSignout
-                    }>
-                    <Text style={styles.signoutButtonText}>Logout</Text>
-                </TouchableOpacity>
-                {/* <Card style={styles.cardContainer}>
-                    <View style={styles.subContainer}>
-                        <TouchableOpacity style={styles.button} onPress={() => {
-                            this.props.navigation.navigate('AssignedHires')
-                        }}>
-                            <Text style={styles.buttonText}>NEW HIRE ASSIGNMENTS  </Text>
-                            <Badge style={styles.badge} value={assignedHiresCount} status="primary" />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} onPress={() => {
-                            this.props.navigation.navigate('UpcomingHires');
-                        }}>
-                            <Text style={styles.buttonText}>UPCOMING HIRES  </Text>
-                            <Badge style={styles.badge} value={upcomingHiresCount} status="primary" />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} onPress={() => {
-                            this.props.navigation.navigate('PastHires');
-                        }}>
-                            <Text style={styles.buttonText}>PAST HIRES</Text>
-                        </TouchableOpacity>
-                    </View> 
-                </Card> */}
                 <TouchableOpacity style={styles.card} onPress={() => {this.props.navigation.navigate('AssignedHires')}}>
-                <Image style={styles.image} source={{uri: 'https://img.icons8.com/color/96/000000/appointment-reminders.png'}}/> 
-                <View style={styles.cardContent}>
-                    <Text style={styles.name}>Hire Assignments</Text>
-                    {/* <Text style={styles.count}>{assignedHiresCount}</Text> */}
-                    <TouchableOpacity style={styles.followButton} onPress={()=> {this.props.navigation.navigate('AssignedHires')}}>
-                    <Text style={styles.followButtonText}>{assignedHiresCount}</Text>  
-                    </TouchableOpacity>
-                </View>
+                    <Image style={styles.image} source={require("../assets/appointment-reminders.png")}/> 
+                    <View style={styles.cardContent}>
+                        <Text style={styles.name}>New Hire Assignments</Text>
+                        <TouchableOpacity style={styles.followButton} onPress={()=> {this.props.navigation.navigate('AssignedHires')}}>
+                        <Text style={styles.followButtonText}>{assignedHiresCount}</Text>  
+                        </TouchableOpacity>
+                    </View>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.card} onPress={() => {this.props.navigation.navigate('UpcomingHires')}}>
-                <Image style={styles.image} source={{uri: 'https://img.icons8.com/color/48/000000/event-accepted-tentatively.png'}}/> 
-                <View style={styles.cardContent}>
-                    <Text style={styles.name}>Upcoming Hires</Text>
-                    {/* <Text style={styles.count}>{upcomingHiresCount}</Text> */}
-                    <TouchableOpacity style={styles.followButton} onPress={()=> {this.props.navigation.navigate('UpcomingHires')}}>
-                    <Text style={styles.followButtonText}>{upcomingHiresCount}</Text>  
-                    </TouchableOpacity>
-                </View>
+                    <Image style={styles.image} source={require("../assets/event-accepted-tentatively.png")}/> 
+                    <View style={styles.cardContent}>
+                        <Text style={styles.name}>Upcoming Hires</Text>
+                        <TouchableOpacity style={styles.followButton} onPress={()=> {this.props.navigation.navigate('UpcomingHires')}}>
+                        <Text style={styles.followButtonText}>{upcomingHiresCount}</Text>  
+                        </TouchableOpacity>
+                    </View>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.card} onPress={() => {this.props.navigation.navigate('PastHires')}}>
-                <Image style={styles.image} source={{uri: 'https://img.icons8.com/color/96/000000/time-machine--v1.png'}}/> 
-                <View style={styles.cardContent}>
-                    <Text style={styles.name}>Past Hires</Text>
-                </View>
+                    <Image style={styles.image} source={require('../assets/time-machine--v1.png')}/> 
+                    <View style={styles.cardContent}>
+                        <Text style={styles.name}>Past Hires</Text>
+                    </View>
                 </TouchableOpacity>
                 
                 {!ongoingHire.length ?
@@ -178,7 +149,23 @@ class Dashboard extends React.Component {
                             />
                         </View>
                     </Card>
-                }    
+                }
+                <View style={{paddingTop: 15}}>
+                    <TouchableOpacity style={styles.signoutButtonBottom} onPress={
+                        this.handleSignout
+                        }>
+                        <Text style={styles.signoutButtonText}>Logout</Text>
+                    </TouchableOpacity> 
+                    <TouchableOpacity style={styles.signoutButtonBottom} 
+                        onPress={() => {
+                            this.props.navigation.navigate('Profile',{
+                            }
+                            );
+                        }}
+                    >
+                        <Text style={styles.signoutButtonText}>Profile</Text>
+                    </TouchableOpacity>         
+                </View> 
             </ScrollView>
         )
     }
@@ -235,7 +222,8 @@ const styles = StyleSheet.create({
     signoutButtonText: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: 'white'
+        color: 'white',
+        textAlignVertical: 'center'
     },
     signout: {
         marginTop: 10,
@@ -249,6 +237,18 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         width: 60,
+    },
+    signoutButtonBottom: {
+        marginTop: 10,
+        margin: 5,
+        marginBottom: 5,
+        paddingVertical: 12,
+        paddingTop: 10,
+        alignItems: 'center',
+        backgroundColor: '#007bff',
+        borderColor: '#007bff',
+        borderWidth: 1,
+        borderRadius: 5,
     },
     detailButton: {
         marginTop: 10
