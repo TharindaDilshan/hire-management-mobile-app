@@ -1,6 +1,17 @@
 import React from 'react'
-import { View, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
+// import { View, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
 import { Text, Card, Button, Badge } from 'react-native-elements';
+import {
+    StyleSheet,
+    View,
+    Image,
+    TouchableOpacity,
+    FlatList,
+    Dimensions,
+    Alert,
+    ScrollView,
+    ActivityIndicator
+  } from 'react-native';
 import Firebase from '../config/Firebase';
 import { connect } from 'react-redux'
 import moment from 'moment'
@@ -40,6 +51,12 @@ class Dashboard extends React.Component {
     static navigationOptions = {
         title: 'Dashboard', 
         headerLeft: null,
+        // headerRight: (
+        // <Button
+        //     title="Logout"
+        //     onPress={this.handleSignout}
+        // />
+        // ),
     };
 
     handleSignout = () => {
@@ -65,7 +82,7 @@ class Dashboard extends React.Component {
                     }>
                     <Text style={styles.signoutButtonText}>Logout</Text>
                 </TouchableOpacity>
-                <Card style={styles.cardContainer}>
+                {/* <Card style={styles.cardContainer}>
                     <View style={styles.subContainer}>
                         <TouchableOpacity style={styles.button} onPress={() => {
                             this.props.navigation.navigate('AssignedHires')
@@ -85,7 +102,33 @@ class Dashboard extends React.Component {
                             <Text style={styles.buttonText}>PAST HIRES</Text>
                         </TouchableOpacity>
                     </View> 
-                </Card>
+                </Card> */}
+                <TouchableOpacity style={styles.card} onPress={() => {this.props.navigation.navigate('AssignedHires')}}>
+                <Image style={styles.image} source={{uri: 'https://img.icons8.com/color/96/000000/appointment-reminders.png'}}/> 
+                <View style={styles.cardContent}>
+                    <Text style={styles.name}>Hire Assignments</Text>
+                    {/* <Text style={styles.count}>{assignedHiresCount}</Text> */}
+                    <TouchableOpacity style={styles.followButton} onPress={()=> {this.props.navigation.navigate('AssignedHires')}}>
+                    <Text style={styles.followButtonText}>{assignedHiresCount}</Text>  
+                    </TouchableOpacity>
+                </View>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.card} onPress={() => {this.props.navigation.navigate('UpcomingHires')}}>
+                <Image style={styles.image} source={{uri: 'https://img.icons8.com/color/48/000000/event-accepted-tentatively.png'}}/> 
+                <View style={styles.cardContent}>
+                    <Text style={styles.name}>Upcoming Hires</Text>
+                    {/* <Text style={styles.count}>{upcomingHiresCount}</Text> */}
+                    <TouchableOpacity style={styles.followButton} onPress={()=> {this.props.navigation.navigate('UpcomingHires')}}>
+                    <Text style={styles.followButtonText}>{upcomingHiresCount}</Text>  
+                    </TouchableOpacity>
+                </View>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.card} onPress={() => {this.props.navigation.navigate('PastHires')}}>
+                <Image style={styles.image} source={{uri: 'https://img.icons8.com/color/96/000000/time-machine--v1.png'}}/> 
+                <View style={styles.cardContent}>
+                    <Text style={styles.name}>Past Hires</Text>
+                </View>
+                </TouchableOpacity>
                 
                 {!ongoingHire.length ?
                     <Card style={styles.cardContainer}>
@@ -97,16 +140,6 @@ class Dashboard extends React.Component {
                                 <Text h5>There is no hire assigned for today!</Text>
                             </View>
                         </View> 
-                        <View style={styles.detailButton}>
-                            {/* <Button
-                            large
-                            backgroundColor={'#999999'}
-                            color={'#FFFFFF'}
-                            title='Party Hard'
-                            buttonStyle={{backgroundColor: 'green'}}
-                            onPress={()=> {}}
-                            /> */}
-                        </View>
                     </Card>
                 : 
                     <Card style={styles.cardContainer}>
@@ -219,7 +252,70 @@ const styles = StyleSheet.create({
     },
     detailButton: {
         marginTop: 10
-    }
+    },
+    // test
+    contentList:{
+        flex:1,
+      },
+      cardContent: {
+        marginLeft:20,
+        marginTop:10
+      },
+      image:{
+        height: 50,
+        width: 50,
+        alignSelf:'center'
+      },
+    
+      card:{
+        shadowColor: '#00000021',
+        shadowOffset: {
+          width: 0,
+          height: 6,
+        },
+        shadowOpacity: 0.37,
+        shadowRadius: 7.49,
+        elevation: 12,
+    
+        marginLeft: 20,
+        marginRight: 20,
+        marginTop:20,
+        backgroundColor:"white",
+        padding: 10,
+        flexDirection:'row',
+        borderRadius:30,
+      },
+    
+      name:{
+        fontSize:28,
+        flex:1,
+        alignSelf:'center',
+        color:"#3399ff",
+        fontWeight:'bold'
+      },
+      count:{
+        fontSize:20,
+        flex:1,
+        alignSelf:'center',
+        color:"#6666ff"
+      },
+      followButton: {
+        marginTop:10,
+        height:35,
+        width:100,
+        padding:10,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius:30,
+        backgroundColor: "white",
+        borderWidth:1,
+        borderColor:"#0ea1c9",
+      },
+      followButtonText:{
+        color: "#0ea1c9",
+        fontSize:20,
+      },
 })
 
 const mapStateToProps = state => {
